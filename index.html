@@ -4,10 +4,476 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bamboo Chicken Digital Billboard</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Space Grotesk", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"]
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Gently color shift brand logo text */
+      @keyframes colorShift {
+        0% { color: #111111; }
+        33% { color: #FFB81C; }
+        66% { color: #FF5F1F; }
+        100% { color: #111111; }
+      }
+      @keyframes colorShiftReverse {
+        0% { color: #111111; }
+        33% { color: #FF5F1F; }
+        66% { color: #FFB81C; }
+        100% { color: #111111; }
+      }
+      .color-shift-bamboo {
+        animation: colorShift 5s infinite ease-in-out;
+      }
+      .color-shift-chicken {
+        animation: colorShiftReverse 5s infinite ease-in-out;
+      }
+    </style>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="w-full h-screen bg-[#111111] flex items-center justify-center overflow-hidden select-none touch-none m-0 p-0 font-sans">
+    
+    <!-- 9:16 Portrait Canvas (Immersive on mobile, centered billboard frame on desktop) -->
+    <div 
+      id="billboard-canvas"
+      class="relative w-full h-full max-w-[450px] aspect-[9/16] bg-white text-black overflow-hidden md:rounded-3xl md:shadow-[0_0_80px_rgba(0,0,0,0.85)] md:border-8 md:border-neutral-800 flex flex-col"
+    >
+      
+      <!-- Permanent Branded Header: remains fixed at the top throughout the entire experience -->
+      <header 
+        id="permanent-header" 
+        class="w-full bg-white py-5 px-6 border-b border-neutral-100 flex flex-col items-center justify-center z-30 shadow-[0_2px_15px_rgba(0,0,0,0.02)]"
+      >
+        <h1 class="font-display font-black text-3xl sm:text-4xl tracking-tight uppercase leading-none text-center">
+          <span class="text-neutral-950">BAMBOO</span> <span class="text-[#FF5F1F]">CHICKEN</span>
+        </h1>
+        
+        <!-- Alternating Tagline: Fades smoothly every 3 seconds -->
+        <div class="relative h-6 w-full mt-2 flex items-center justify-center overflow-hidden">
+          <p id="header-tagline-crispy" class="absolute font-sans font-extrabold text-xs sm:text-sm tracking-wider text-[#FF5F1F] uppercase transition-all duration-500 opacity-100 transform translate-y-0">
+            "Crispy & Juicy."
+          </p>
+          <p id="header-tagline-magic" class="absolute font-sans font-extrabold text-xs sm:text-sm tracking-wider text-[#FFB81C] uppercase transition-all duration-500 opacity-0 transform translate-y-4">
+            "Taste the Bamboo Magic!"
+          </p>
+        </div>
+      </header>
+
+      <!-- Slides Content Viewport: Beneath the fixed header -->
+      <main id="content-viewport" class="relative flex-1 w-full overflow-hidden bg-white">
+        
+        <!-- --- 1. OPENING SEQUENCE SLIDE --- -->
+        <div id="slide-opening" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-white px-8 text-center transition-opacity duration-1000 opacity-0 pointer-events-none z-10">
+          <div class="flex flex-col items-center">
+            <!-- Animated Title (Bamboo fades in, Chicken slides in from right, custom color shift) -->
+            <div class="flex flex-col items-center">
+              <span id="opening-bamboo" class="font-display font-black text-5xl sm:text-6xl tracking-tight uppercase leading-none color-shift-bamboo opacity-0 transition-opacity duration-1000">
+                BAMBOO
+              </span>
+              <span id="opening-chicken" class="font-display font-black text-5xl sm:text-6xl tracking-tight uppercase leading-none color-shift-chicken transform translate-x-12 opacity-0 transition-all duration-1000 ease-out">
+                CHICKEN
+              </span>
+            </div>
+
+            <!-- Subtitle / Country Accent -->
+            <div id="opening-badge" class="mt-4 flex items-center gap-1.5 opacity-0 transition-opacity duration-800">
+              <span class="h-1 w-6 bg-[#FFB81C] rounded-full"></span>
+              <p class="font-sans font-extrabold text-xs tracking-[0.3em] text-neutral-500 uppercase">
+                ZIMBABWE
+              </p>
+              <span class="h-1 w-6 bg-[#FFB81C] rounded-full"></span>
+            </div>
+          </div>
+
+          <!-- Tagline Transition Container: Fades between part 1 and part 2 -->
+          <div class="relative mt-16 h-20 w-full flex items-center justify-center">
+            <p id="opening-tagline-crispy" class="absolute font-display font-black text-2xl sm:text-3xl text-[#FF5F1F] leading-tight tracking-tight max-w-[280px] opacity-0 transition-opacity duration-500">
+              "Crispy & Juicy."
+            </p>
+            <p id="opening-tagline-magic" class="absolute font-display font-black text-2xl sm:text-3xl text-[#FFB81C] leading-tight tracking-tight max-w-[280px] opacity-0 transition-opacity duration-500">
+              "Taste the Bamboo Magic!"
+            </p>
+          </div>
+        </div>
+
+        <!-- --- 2. PRODUCT SHOWCASE SLIDE --- -->
+        <div id="slide-product" class="absolute inset-0 w-full h-full bg-[#FCFAF5] flex flex-col justify-between overflow-hidden transition-opacity duration-1000 opacity-0 pointer-events-none z-10">
+          
+          <!-- Food Image Container -->
+          <div class="absolute inset-x-0 top-0 bottom-[130px] flex items-center justify-center px-4 overflow-hidden">
+            <!-- Dynamic light spotlight glow behind food -->
+            <div class="absolute w-[340px] h-[340px] rounded-full bg-gradient-to-tr from-amber-200/40 to-orange-200/40 blur-3xl opacity-70"></div>
+            
+            <!-- Ken Burns Slow Zoom Image -->
+            <img 
+              id="product-image" 
+              src="" 
+              alt="Product Image" 
+              class="w-full h-full max-h-[75vh] object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.12)] z-10 transform scale-100 transition-transform ease-linear"
+            />
+          </div>
+
+          <!-- Bottom Info Card displaying: Product Name & Price -->
+          <div class="absolute bottom-0 inset-x-0 pb-10 px-6 z-20">
+            <div id="product-card" class="bg-white/95 backdrop-blur-md rounded-2xl p-6 border border-neutral-100/80 shadow-[0_20px_40px_rgba(0,0,0,0.06)] flex flex-col gap-1 transform translate-y-8 opacity-0 transition-all duration-800">
+              <h2 id="product-name" class="font-display font-black text-2xl sm:text-3xl text-neutral-900 tracking-tight leading-tight">
+                Product Name
+              </h2>
+              <div class="flex items-center justify-between mt-2 pt-2 border-t border-neutral-100">
+                <span class="font-sans font-semibold text-xs tracking-wider text-neutral-400 uppercase">
+                  Price
+                </span>
+                <span id="product-price" class="font-display font-black text-3xl sm:text-4xl text-[#FF5F1F]">
+                  $0.00
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- --- 3. FINAL SOCIAL MEDIA SLIDE --- -->
+        <div id="slide-final" class="absolute inset-0 w-full h-full bg-[#FCFAF5] flex flex-col justify-between px-6 py-8 text-center overflow-hidden transition-opacity duration-1000 opacity-0 pointer-events-none z-10">
+          <!-- Subtle decorative background gradient glow -->
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] rounded-full bg-gradient-to-tr from-amber-100/40 to-orange-100/40 blur-3xl opacity-60 pointer-events-none"></div>
+
+          <!-- Title Header -->
+          <div class="relative z-10">
+            <span class="font-sans text-[10px] sm:text-xs tracking-[0.25em] text-neutral-400 uppercase font-black">
+              Follow The Journey
+            </span>
+            <h2 class="font-display font-black text-2xl sm:text-3xl text-neutral-900 tracking-tight leading-tight mt-1">
+              Join the Family!
+            </h2>
+          </div>
+
+          <!-- Social Content: Populated dynamically for Touch / Non-Touch -->
+          <div id="social-content-container" class="flex-1 flex flex-col justify-center items-center relative z-10 py-4 w-full">
+            <!-- Populated via Javascript -->
+          </div>
+
+          <!-- Promotional website link -->
+          <div class="relative z-10 pt-4 border-t border-neutral-100/60 pb-2">
+            <span class="font-sans text-[10px] sm:text-xs tracking-widest text-neutral-400 uppercase font-bold block mb-0.5">
+              Order Online
+            </span>
+            <a
+              href="https://eatbamboochicken.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-display font-black text-2xl sm:text-3xl text-neutral-900 tracking-tight relative inline-block group"
+            >
+              eatbamboochicken.com
+              <span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#FF5F1F] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 rounded-full"></span>
+            </a>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Vanilla Javascript Logic -->
+    <script>
+      // 1. Data Structure
+      const PRODUCTS = [
+        {
+          name: "Bamboo Chicken",
+          price: "$1.50 per stick",
+          image: "https://pub-1d12d1bcd0c54b5282f7b9e9eec3ba59.r2.dev/assets/images/website/bamboo_chicken_3_sticks.webp",
+        },
+        {
+          name: "1/4 Chicken with Chips",
+          price: "$3.50",
+          image: "https://pub-1d12d1bcd0c54b5282f7b9e9eec3ba59.r2.dev/assets/images/website/bamboo_chicken_chips.webp",
+        },
+        {
+          name: "Bamboo Wings with Sadza",
+          price: "$3.00",
+          image: "https://pub-1d12d1bcd0c54b5282f7b9e9eec3ba59.r2.dev/assets/images/menu/bamboo_sadza_wings.webp",
+        },
+        {
+          name: "Shawarma Chicken",
+          price: "$3.50",
+          image: "https://pub-1d12d1bcd0c54b5282f7b9e9eec3ba59.r2.dev/assets/images/menu/bamboo_shawarma_chicken.webp",
+        },
+        {
+          name: "Beef with Sadza",
+          price: "$3.00",
+          image: "https://pub-1d12d1bcd0c54b5282f7b9e9eec3ba59.r2.dev/assets/images/menu/bamboo_sadza_beef.webp",
+        }
+      ];
+
+      // Build out full sequence order:
+      // Opening (0) -> Product 1 (1) -> Product 2 (2) -> Product 3 (3) -> Product 4 (4) -> Product 5 (5) -> Final Screen (6)
+      const SCENES = [
+        { type: "opening", duration: 5000 },
+        ...PRODUCTS.map((prod, idx) => ({ type: "product", duration: 8000, product: prod })),
+        { type: "final", duration: 10000 }
+      ];
+
+      let currentSceneIdx = 0;
+      let taglineState = true; // true: crispy, false: magic
+
+      // Preload all images to prevent flickering or loading delays
+      function preloadImages() {
+        PRODUCTS.forEach(p => {
+          const img = new Image();
+          img.src = p.image;
+        });
+      }
+
+      // Detect if touch-capable device
+      function checkTouchDevice() {
+        return window.matchMedia("(pointer: coarse)").matches || 
+               ("ontouchstart" in window) || 
+               (navigator.maxTouchPoints > 0);
+      }
+
+      // Alternating tagline in fixed header (every 3 seconds)
+      function startHeaderTaglineRotation() {
+        setInterval(() => {
+          taglineState = !taglineState;
+          const crispy = document.getElementById("header-tagline-crispy");
+          const magic = document.getElementById("header-tagline-magic");
+          
+          if (taglineState) {
+            crispy.className = "absolute font-sans font-extrabold text-xs sm:text-sm tracking-wider text-[#FF5F1F] uppercase transition-all duration-500 opacity-100 transform translate-y-0";
+            magic.className = "absolute font-sans font-extrabold text-xs sm:text-sm tracking-wider text-[#FFB81C] uppercase transition-all duration-500 opacity-0 transform translate-y-4";
+          } else {
+            crispy.className = "absolute font-sans font-extrabold text-xs sm:text-sm tracking-wider text-[#FF5F1F] uppercase transition-all duration-500 opacity-0 transform -translate-y-4";
+            magic.className = "absolute font-sans font-extrabold text-xs sm:text-sm tracking-wider text-[#FFB81C] uppercase transition-all duration-500 opacity-100 transform translate-y-0";
+          }
+        }, 3000);
+      }
+
+      // Social Screen rendering logic based on responsive device mode
+      function renderSocialScreen() {
+        const container = document.getElementById("social-content-container");
+        const isTouch = checkTouchDevice();
+        
+        if (isTouch) {
+          // Touch device layout: 4 large interactive icons
+          container.innerHTML = `
+            <div class="grid grid-cols-2 gap-6 max-w-[280px]">
+              <a href="https://www.facebook.com/profile.php?id=61592053377758" target="_blank" rel="noopener noreferrer" 
+                 class="w-24 h-24 rounded-2xl bg-neutral-900 shadow-md flex items-center justify-center text-white transition-all transform active:scale-95 border border-neutral-800">
+                <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24">
+                  <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+                </svg>
+              </a>
+              <a href="https://www.instagram.com/bamboochicken.zw" target="_blank" rel="noopener noreferrer" 
+                 class="w-24 h-24 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-600 to-red-600 shadow-md flex items-center justify-center text-white transition-all transform active:scale-95">
+                <svg class="h-10 w-10 stroke-current fill-none stroke-[2.2]" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <a href="https://www.tiktok.com/@bamboo.chicken.zw" target="_blank" rel="noopener noreferrer" 
+                 class="w-24 h-24 rounded-2xl bg-black shadow-md flex items-center justify-center text-white transition-all transform active:scale-95 border border-neutral-800">
+                <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24">
+                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.63 4.15 1.02 1.11 2.45 1.77 3.93 1.83v3.82c-1.78-.02-3.51-.55-4.97-1.57-.2-.14-.38-.29-.56-.44V14.5c.03 2.11-.6 4.23-1.89 5.86-1.51 1.95-4.04 3.14-6.52 3.12-2.84.05-5.69-1.42-7.1-3.9-1.59-2.73-1.57-6.28.05-8.99C4.42 8.24 7.37 6.8 10.4 7.1c.36.03.71.1 1.06.2V11.2c-.78-.26-1.66-.23-2.4.11-1.12.5-1.83 1.67-1.79 2.9.04 1.53 1.25 2.82 2.78 2.89 1.48.06 2.89-.96 3.12-2.42.06-.3.08-.61.08-.91V.02h-.725z" />
+                </svg>
+              </a>
+              <a href="https://whatsapp.com/channel/0029VbCrLUNKQuJPLqLnZI0n" target="_blank" rel="noopener noreferrer" 
+                 class="w-24 h-24 rounded-2xl bg-emerald-600 shadow-md flex items-center justify-center text-white transition-all transform active:scale-95">
+                <svg class="h-10 w-10 fill-current" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.454L0 24zm6.59-4.846c1.6.95 3.18 1.452 4.825 1.453 5.46-.001 9.902-4.441 9.905-9.905.002-2.647-1.025-5.133-2.893-7.004C16.618 1.828 14.137.8 11.5.8 6.047.8 1.606 5.237 1.603 10.693c-.001 1.684.444 3.328 1.29 4.767l-.963 3.517 3.612-.947c1.4.766 2.89 1.124 4.105 1.124zM18.06 14.74c-.33-.165-1.955-.963-2.254-1.073-.3-.108-.518-.165-.736.165-.218.33-.84.11-1.026.33-.186.22-.373.248-.702.083-.33-.165-1.39-.512-2.648-1.633-.98-.874-1.64-1.953-1.832-2.28-.193-.33-.02-.507.144-.67.147-.148.33-.385.495-.578.165-.192.22-.33.33-.55.11-.22.055-.412-.028-.577-.083-.165-.736-1.774-1.008-2.434-.265-.636-.53-.55-.736-.56-.19-.01-.41-.01-.63-.01s-.577.083-.88.412c-.302.33-1.154 1.128-1.154 2.75 0 1.622 1.18 3.19 1.344 3.41.165.22 2.324 3.55 5.63 4.98.786.34 1.4.544 1.88.702.79.25 1.513.215 2.083.13.635-.094 1.955-.8 2.234-1.568.28-.77.28-1.43.196-1.568-.084-.14-.3-.22-.63-.385z" />
+                </svg>
+              </a>
+            </div>
+          `;
+        } else {
+          // Large TV/Kiosk/Desktop device layout: 4 list rows with official handles
+          container.innerHTML = `
+            <div class="w-full max-w-[340px] flex flex-col gap-3 px-2">
+              <a href="https://www.instagram.com/bamboochicken.zw" target="_blank" rel="noopener noreferrer" 
+                 class="flex items-center gap-3.5 bg-white p-3 rounded-xl border border-neutral-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-neutral-200 transition-all">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-500 via-orange-600 to-red-600 flex items-center justify-center text-white shrink-0">
+                  <svg class="h-5 w-5 stroke-current fill-none stroke-[2.2]" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                  </svg>
+                </div>
+                <div class="text-left">
+                  <p class="font-sans font-bold text-[10px] text-neutral-400 uppercase tracking-wider leading-none">Instagram</p>
+                  <p class="font-sans font-extrabold text-sm text-neutral-800 tracking-tight mt-0.5">@bamboochicken.zw</p>
+                </div>
+              </a>
+
+              <a href="https://www.tiktok.com/@bamboo.chicken.zw" target="_blank" rel="noopener noreferrer" 
+                 class="flex items-center gap-3.5 bg-white p-3 rounded-xl border border-neutral-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-neutral-200 transition-all">
+                <div class="w-10 h-10 rounded-lg bg-black flex items-center justify-center text-white shrink-0">
+                  <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.63 4.15 1.02 1.11 2.45 1.77 3.93 1.83v3.82c-1.78-.02-3.51-.55-4.97-1.57-.2-.14-.38-.29-.56-.44V14.5c.03 2.11-.6 4.23-1.89 5.86-1.51 1.95-4.04 3.14-6.52 3.12-2.84.05-5.69-1.42-7.1-3.9-1.59-2.73-1.57-6.28.05-8.99C4.42 8.24 7.37 6.8 10.4 7.1c.36.03.71.1 1.06.2V11.2c-.78-.26-1.66-.23-2.4.11-1.12.5-1.83 1.67-1.79 2.9.04 1.53 1.25 2.82 2.78 2.89 1.48.06 2.89-.96 3.12-2.42.06-.3.08-.61.08-.91V.02h-.725z" />
+                  </svg>
+                </div>
+                <div class="text-left">
+                  <p class="font-sans font-bold text-[10px] text-neutral-400 uppercase tracking-wider leading-none">TikTok</p>
+                  <p class="font-sans font-extrabold text-sm text-neutral-800 tracking-tight mt-0.5">@bamboo.chicken.zw</p>
+                </div>
+              </a>
+
+              <a href="https://www.facebook.com/profile.php?id=61592053377758" target="_blank" rel="noopener noreferrer" 
+                 class="flex items-center gap-3.5 bg-white p-3 rounded-xl border border-neutral-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-neutral-200 transition-all">
+                <div class="w-10 h-10 rounded-lg bg-neutral-900 flex items-center justify-center text-white shrink-0">
+                  <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+                  </svg>
+                </div>
+                <div class="text-left">
+                  <p class="font-sans font-bold text-[10px] text-neutral-400 uppercase tracking-wider leading-none">Facebook</p>
+                  <p class="font-sans font-extrabold text-sm text-neutral-800 tracking-tight mt-0.5">Bamboo Chicken Zimbabwe</p>
+                </div>
+              </a>
+
+              <a href="https://whatsapp.com/channel/0029VbCrLUNKQuJPLqLnZI0n" target="_blank" rel="noopener noreferrer" 
+                 class="flex items-center gap-3.5 bg-white p-3 rounded-xl border border-neutral-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-neutral-200 transition-all">
+                <div class="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center text-white shrink-0">
+                  <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.454L0 24zm6.59-4.846c1.6.95 3.18 1.452 4.825 1.453 5.46-.001 9.902-4.441 9.905-9.905.002-2.647-1.025-5.133-2.893-7.004C16.618 1.828 14.137.8 11.5.8 6.047.8 1.606 5.237 1.603 10.693c-.001 1.684.444 3.328 1.29 4.767l-.963 3.517 3.612-.947c1.4.766 2.89 1.124 4.105 1.124zM18.06 14.74c-.33-.165-1.955-.963-2.254-1.073-.3-.108-.518-.165-.736.165-.218.33-.84.11-1.026.33-.186.22-.373.248-.702.083-.33-.165-1.39-.512-2.648-1.633-.98-.874-1.64-1.953-1.832-2.28-.193-.33-.02-.507.144-.67.147-.148.33-.385.495-.578.165-.192.22-.33.33-.55.11-.22.055-.412-.028-.577-.083-.165-.736-1.774-1.008-2.434-.265-.636-.53-.55-.736-.56-.19-.01-.41-.01-.63-.01s-.577.083-.88.412c-.302.33-1.154 1.128-1.154 2.75 0 1.622 1.18 3.19 1.344 3.41.165.22 2.324 3.55 5.63 4.98.786.34 1.4.544 1.88.702.79.25 1.513.215 2.083.13.635-.094 1.955-.8 2.234-1.568.28-.77.28-1.43.196-1.568-.084-.14-.3-.22-.63-.385z" />
+                  </svg>
+                </div>
+                <div class="text-left">
+                  <p class="font-sans font-bold text-[10px] text-neutral-400 uppercase tracking-wider leading-none">WhatsApp Channel</p>
+                  <p class="font-sans font-extrabold text-sm text-neutral-800 tracking-tight mt-0.5">Follow our WhatsApp Channel</p>
+                </div>
+              </a>
+            </div>
+          `;
+        }
+      }
+
+      // Main State Machine for Scene Transitions
+      function triggerScene(sceneIdx) {
+        // Hide all slides
+        const slideOpening = document.getElementById("slide-opening");
+        const slideProduct = document.getElementById("slide-product");
+        const slideFinal = document.getElementById("slide-final");
+
+        slideOpening.className = "absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-white px-8 text-center transition-opacity duration-1000 opacity-0 pointer-events-none z-10";
+        slideProduct.className = "absolute inset-0 w-full h-full bg-[#FCFAF5] flex flex-col justify-between overflow-hidden transition-opacity duration-1000 opacity-0 pointer-events-none z-10";
+        slideFinal.className = "absolute inset-0 w-full h-full bg-[#FCFAF5] flex flex-col justify-between px-6 py-8 text-center overflow-hidden transition-opacity duration-1000 opacity-0 pointer-events-none z-10";
+
+        const currentScene = SCENES[sceneIdx];
+
+        if (currentScene.type === "opening") {
+          // Reset elements
+          const b = document.getElementById("opening-bamboo");
+          const c = document.getElementById("opening-chicken");
+          const bg = document.getElementById("opening-badge");
+          const t1 = document.getElementById("opening-tagline-crispy");
+          const t2 = document.getElementById("opening-tagline-magic");
+
+          b.className = "font-display font-black text-5xl sm:text-6xl tracking-tight uppercase leading-none color-shift-bamboo opacity-0 transition-opacity duration-1000";
+          c.className = "font-display font-black text-5xl sm:text-6xl tracking-tight uppercase leading-none color-shift-chicken transform translate-x-12 opacity-0 transition-all duration-1000 ease-out";
+          bg.className = "mt-4 flex items-center gap-1.5 opacity-0 transition-opacity duration-800";
+          t1.className = "absolute font-display font-black text-2xl sm:text-3xl text-[#FF5F1F] leading-tight tracking-tight max-w-[280px] opacity-0 transition-opacity duration-500";
+          t2.className = "absolute font-display font-black text-2xl sm:text-3xl text-[#FFB81C] leading-tight tracking-tight max-w-[280px] opacity-0 transition-opacity duration-500";
+
+          // Show slide
+          slideOpening.classList.remove("opacity-0", "pointer-events-none");
+          slideOpening.classList.add("opacity-100", "pointer-events-auto");
+
+          // Trigger Opening Animations
+          setTimeout(() => {
+            b.classList.remove("opacity-0");
+            b.classList.add("opacity-100");
+          }, 100);
+
+          setTimeout(() => {
+            c.classList.remove("opacity-0", "translate-x-12");
+            c.classList.add("opacity-100", "translate-x-0");
+          }, 300);
+
+          setTimeout(() => {
+            bg.classList.remove("opacity-0");
+            bg.classList.add("opacity-100");
+          }, 600);
+
+          // Tagline Timeline Part 1 (0.8s to 2.8s)
+          setTimeout(() => {
+            t1.classList.remove("opacity-0");
+            t1.classList.add("opacity-100");
+          }, 800);
+
+          setTimeout(() => {
+            t1.classList.remove("opacity-100");
+            t1.classList.add("opacity-0");
+          }, 2800);
+
+          // Tagline Timeline Part 2 (3.0s onwards)
+          setTimeout(() => {
+            t2.classList.remove("opacity-0");
+            t2.classList.add("opacity-100");
+          }, 3100);
+
+        } else if (currentScene.type === "product") {
+          // Reset Image Scale & Info Card
+          const img = document.getElementById("product-image");
+          const card = document.getElementById("product-card");
+
+          img.src = currentScene.product.image;
+          img.alt = currentScene.product.name;
+          document.getElementById("product-name").innerText = currentScene.product.name;
+          document.getElementById("product-price").innerText = currentScene.product.price;
+
+          img.className = "w-full h-full max-h-[75vh] object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.12)] z-10 transform scale-[0.98] transition-transform ease-linear";
+          card.className = "bg-white/95 backdrop-blur-md rounded-2xl p-6 border border-neutral-100/80 shadow-[0_20px_40px_rgba(0,0,0,0.06)] flex flex-col gap-1 transform translate-y-8 opacity-0 transition-all duration-800";
+
+          // Show slide
+          slideProduct.classList.remove("opacity-0", "pointer-events-none");
+          slideProduct.classList.add("opacity-100", "pointer-events-auto");
+
+          // Start subtle Ken Burns slow zoom transition
+          setTimeout(() => {
+            img.style.transitionDuration = "8000ms";
+            img.classList.remove("scale-[0.98]");
+            img.classList.add("scale-[1.12]");
+          }, 50);
+
+          // Slide Info Card Up
+          setTimeout(() => {
+            card.classList.remove("opacity-0", "translate-y-8");
+            card.classList.add("opacity-100", "translate-y-0");
+          }, 300);
+
+        } else if (currentScene.type === "final") {
+          // Render Responsive Social Elements
+          renderSocialScreen();
+
+          // Show slide
+          slideFinal.classList.remove("opacity-0", "pointer-events-none");
+          slideFinal.classList.add("opacity-100", "pointer-events-auto");
+        }
+
+        // Setup next scene timeout loop
+        setTimeout(() => {
+          currentSceneIdx = (currentSceneIdx + 1) % SCENES.length;
+          triggerScene(currentSceneIdx);
+        }, currentScene.duration);
+      }
+
+      // 4. Initialize On Load
+      window.addEventListener("DOMContentLoaded", () => {
+        preloadImages();
+        startHeaderTaglineRotation();
+        triggerScene(currentSceneIdx);
+      });
+    </script>
   </body>
 </html>
-
